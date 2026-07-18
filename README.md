@@ -1,10 +1,10 @@
 # 📊 Superstore Sales Performance Analysis
 
-**Portofolio Data Analyst — Analisis, Forecasting, dan Segmentasi Pelanggan menggunakan Excel & Python**
+**Analisis, Forecasting, dan Segmentasi Pelanggan menggunakan Excel & Python**
 
-Analisis penjualan retail Amerika Serikat (2015–2018) untuk menjawab satu pertanyaan bisnis: **produk, kategori, region, dan pelanggan mana yang benar-benar mendorong profit — dan di mana diskon justru diam-diam menggerus keuntungan?**
+Analisis penjualan retail Amerika Serikat (2015–2018) untuk menjawab satu pertanyaan bisnis: **produk, kategori, region, dan pelanggan mana yang benar-benar mendorong profit serta di mana diskon justru diam-diam menggerus keuntungan?**
 
-Proyek ini dikerjakan dalam **dua jalur analisis yang saling melengkapi**: Excel (formula live, pivot-style, forecasting) dan Python (pandas/numpy untuk analisis, Plotly untuk dashboard interaktif). Python & dashboard HTML di sini berfungsi sebagai pengganti Power BI.
+Proyek ini dikerjakan dalam **dua jalur analisis yang saling melengkapi**: Excel (formula live, pivot-style, forecasting) dan Python (pandas/numpy untuk analisis, Plotly untuk dashboard interaktif).
 
 <p align="center">
   <img src="images/dashboard_preview.png" alt="Preview Dashboard Superstore Sales Performance" width="850">
@@ -14,7 +14,7 @@ Proyek ini dikerjakan dalam **dua jalur analisis yang saling melengkapi**: Excel
 
 ---
 
-## 🎯 Ringkasan Eksekutif
+## Ringkasan Eksekutif
 
 | Metrik | Nilai |
 |---|---|
@@ -26,12 +26,12 @@ Proyek ini dikerjakan dalam **dua jalur analisis yang saling melengkapi**: Excel
 | Growth Sales 2018 vs 2017 | **+20.4%** |
 
 **4 Insight Utama:**
-1. 🪑 **Furniture adalah jebakan margin** — sales-nya ($742K) hampir menyamai Technology ($836K), tapi margin-nya hanya 2.5% vs Technology 17.4%.
-2. 🖨️ **Beberapa produk teknologi mahal justru merugi** — 3 unit 3D printer & 1 printer laser rugi lebih dari $17K gabungan.
-3. 🌎 **West & East menyumbang ~70% total profit**, sementara region Central tertinggal jauh meski sales-nya tidak kecil.
-4. 👥 **Sekitar 50% pelanggan berada di segmen "At Risk" atau "Needs Attention"** (analisis RFM) — peluang retensi besar dibanding hanya fokus akuisisi pelanggan baru.
+1. **Furniture adalah jebakan margin** — sales-nya ($742K) hampir menyamai Technology ($836K), tapi margin-nya hanya 2.5% vs Technology 17.4%.
+2. **Beberapa produk teknologi mahal justru merugi** — 3 unit 3D printer & 1 printer laser rugi lebih dari $17K gabungan.
+3. **West & East menyumbang ~70% total profit**, sementara region Central tertinggal jauh meski sales-nya tidak kecil.
+4. **Sekitar 50% pelanggan berada di segmen "At Risk" atau "Needs Attention"** (analisis RFM) — peluang retensi besar dibanding hanya fokus akuisisi pelanggan baru.
 
-📄 Ringkasan 1 halaman siap-presentasi: [`docs/Case_Study_Summary.pdf`](docs/Case_Study_Summary.pdf)
+Ringkasan [`docs/Case_Study_Summary.pdf`](docs/Case_Study_Summary.pdf)
 
 ---
 
@@ -64,7 +64,7 @@ Proyek ini dikerjakan dalam **dua jalur analisis yang saling melengkapi**: Excel
 
 ---
 
-## 🛠️ Tools & Stack
+## Tools & Stack
 
 | Tools | Fungsi |
 |---|---|
@@ -78,7 +78,7 @@ Proyek ini dikerjakan dalam **dua jalur analisis yang saling melengkapi**: Excel
 
 ---
 
-## 📈 Detail Analisis
+## Detail Analisis
 
 ### 1. Tren Sales Bulanan & Forecast
 
@@ -103,7 +103,7 @@ Setiap pelanggan diberi skor Recency, Frequency, dan Monetary (kuartil 1–4), l
 
 ---
 
-## ▶️ Cara Menjalankan
+## Cara Menjalankan
 
 **Melihat dashboard interaktif** (tidak perlu instalasi apa pun):
 ```bash
@@ -129,7 +129,7 @@ Buka `excel/Superstore_Sales_Analysis.xlsx` dengan Microsoft Excel — semua ang
 
 ---
 
-## 📊 Tentang Data
+## Tentang Data
 
 Dataset: **Sample Superstore** — data transaksi retail Amerika Serikat yang banyak digunakan untuk studi kasus Business Intelligence (9.994 baris order, 5.009 order unik, 793 pelanggan, 1.850 produk, periode Januari 2015 – Desember 2018).
 
@@ -138,7 +138,3 @@ Dataset: **Sample Superstore** — data transaksi retail Amerika Serikat yang ba
 1. **Batasi/tinjau ulang diskon Furniture** di atas ambang tertentu (mis. 20%); re-pricing produk yang konsisten rugi (3D printer, printer laser tertentu).
 2. **Investigasi kebijakan diskon region Central** untuk menutup gap dengan West/East yang sales-nya sebanding namun profit jauh lebih tinggi.
 3. **Luncurkan kampanye win-back** untuk pelanggan segmen "At Risk" / "Needs Attention" sebelum menambah budget akuisisi pelanggan baru.
-
----
-
-<p align="center"><i>Dibuat sebagai proyek portofolio Data Analyst — analisis end-to-end dari data cleaning hingga rekomendasi bisnis, menggunakan Excel dan Python.</i></p>
