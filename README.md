@@ -1,4 +1,4 @@
-<img width="851" height="543" alt="image" src="https://github.com/user-attachments/assets/09e72395-8529-48cb-94fc-702c608114a7" /># 📊 Superstore Sales Performance Analysis
+# 📊 Superstore Sales Performance Analysis
 
 **Analisis, Forecasting, dan Segmentasi Pelanggan menggunakan Excel & Python**
 
