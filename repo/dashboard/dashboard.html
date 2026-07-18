@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Superstore Sales Performance — Dashboard Analisis</title>
+<script src="plotly.min.js"></script>
+<style>
+  :root {
+    --navy: #10233F;
+    --navy-2: #16304F;
+    --teal: #0E9594;
+    --amber: #E2703A;
+    --ink: #1D2B3A;
+    --slate: #55636F;
+    --line: #DADFE5;
+    --card: #FFFFFF;
+    --bg: #F5F7FA;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+
+  .terminal-strip {
+    background: var(--navy);
+    color: var(--teal);
+    font-size: 12.5px;
+    padding: 9px 28px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow-x: auto;
+    border-bottom: 1px solid #0A1930;
+  }
+  .terminal-strip span.sep { color: #4B6A87; margin: 0 10px; }
+  .terminal-strip span.val { color: #E8F3F3; }
+
+  header.hero {
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+    color: white;
+    padding: 46px 28px 40px;
+  }
+  .hero-inner { max-width: 1180px; margin: 0 auto; }
+  .eyebrow {
+    font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 12px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin: 0 0 10px;
+    line-height: 1.15;
+  }
+  .hero-sub {
+    font-size: 15.5px;
+    color: #C7D3E0;
+    max-width: 640px;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 0 28px 70px; }
+
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    margin-top: -30px;
+    margin-bottom: 40px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 16px;
+    box-shadow: 0 6px 18px rgba(16,35,63,0.08);
+  }
+  .kpi-label {
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  .kpi-value {
+    font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0;
+  }
+  .kpi-value.positive { color: var(--teal); }
+
+  section.block { margin-bottom: 52px; }
+  .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 18px; }
+  .section-num {
+    font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 12.5px;
+    color: var(--teal);
+    background: #E7F5F5;
+    padding: 3px 9px;
+    border-radius: 5px;
+    font-weight: 700;
+  }
+  h2 { font-size: 20px; font-weight: 700; margin: 0; letter-spacing: -0.2px; }
+  p.lead { color: var(--slate); font-size: 14.5px; margin: -8px 0 20px; max-width: 720px; line-height: 1.6; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px 8px;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .findings { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .finding {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--amber);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 13.8px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .finding.good { border-left-color: var(--teal); }
+  .finding b { color: var(--navy); }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 24px 28px;
+    text-align: center;
+    color: var(--slate);
+    font-size: 12.5px;
+  }
+  footer .mono { color: #8B98A5; }
+
+  @media (max-width: 900px) {
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    .grid-2, .findings { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="terminal-strip mono">
+  DATASET:<span class="val">&nbsp;superstore_orders_clean.csv</span><span class="sep">·</span>BARIS:<span class="val">&nbsp;9.994 baris pesanan</span><span class="sep">·</span>PERIODE:<span class="val">&nbsp;2015-01 &rarr; 2018-12</span><span class="sep">·</span>DIPROSES:<span class="val">&nbsp;python · pandas · numpy · plotly</span>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Data Analyst Portfolio &mdash; Analisis Python</p>
+    <h1>Superstore Sales Performance Dashboard</h1>
+    <p class="hero-sub">Analisis penjualan retail Amerika Serikat 2015&ndash;2018: performa kategori &amp; region,
+    forecast 6 bulan ke depan, dan segmentasi pelanggan RFM &mdash; seluruhnya dihitung dengan Python
+    (pandas/numpy) sebagai pengganti Power BI, divisualisasikan dengan Plotly.</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="kpi-strip" id="kpiStrip"></div>
+
+  <section class="block">
+    <div class="section-head"><span class="section-num">01</span><h2>Tren Sales &amp; Forecast</h2></div>
+    <p class="lead">Tren sales bulanan aktual (2015&ndash;2018) dengan proyeksi tren linear untuk 6 bulan ke depan (Jan&ndash;Jun 2019).</p>
+    <div class="card"><div id="trendChart"></div></div>
+  </section>
+
+  <section class="block">
+    <div class="section-head"><span class="section-num">02</span><h2>Performa Kategori &amp; Region</h2></div>
+    <p class="lead">Furniture memiliki sales besar tapi margin tipis; West &amp; East region menyumbang mayoritas profit.</p>
+    <div class="grid-2">
+      <div class="card"><div id="categoryChart"></div></div>
+      <div class="card"><div id="regionChart"></div></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="section-head"><span class="section-num">03</span><h2>Produk &amp; Segmentasi Pelanggan</h2></div>
+    <p class="lead">Produk paling menguntungkan, dan segmentasi 793 pelanggan berdasarkan Recency, Frequency, Monetary (RFM).</p>
+    <div class="grid-2">
+      <div class="card"><div id="productChart"></div></div>
+      <div class="card"><div id="rfmChart"></div></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="section-head"><span class="section-num">04</span><h2>Insight Utama</h2></div>
+    <div class="findings" id="findings"></div>
+  </section>
+
+</main>
+
+<footer>
+  <div>Dibangun dengan <span class="mono">Python (pandas, numpy, Plotly)</span> &mdash; menggantikan Power BI untuk portofolio ini.</div>
+  <div style="margin-top:4px;">Lihat juga: <span class="mono">notebook/analysis.ipynb</span> · <span class="mono">excel/Superstore_Sales_Analysis.xlsx</span></div>
+</footer>
+
+<script>
+const D = {"kpi": {"total_sales": 2297200.86, "total_profit": 286397.02, "profit_margin": 0.1247, "distinct_orders": 5009, "avg_order_value": 458.61, "yoy_growth": 0.2036}, "monthly_trend": {"labels": ["Jan-2015", "Feb-2015", "Mar-2015", "Apr-2015", "May-2015", "Jun-2015", "Jul-2015", "Aug-2015", "Sep-2015", "Oct-2015", "Nov-2015", "Dec-2015", "Jan-2016", "Feb-2016", "Mar-2016", "Apr-2016", "May-2016", "Jun-2016", "Jul-2016", "Aug-2016", "Sep-2016", "Oct-2016", "Nov-2016", "Dec-2016", "Jan-2017", "Feb-2017", "Mar-2017", "Apr-2017", "May-2017", "Jun-2017", "Jul-2017", "Aug-2017", "Sep-2017", "Oct-2017", "Nov-2017", "Dec-2017", "Jan-2018", "Feb-2018", "Mar-2018", "Apr-2018", "May-2018", "Jun-2018", "Jul-2018", "Aug-2018", "Sep-2018", "Oct-2018", "Nov-2018", "Dec-2018", "Jan-2019", "Feb-2019", "Mar-2019", "Apr-2019", "May-2019", "Jun-2019"], "actual_sales": [14236.9, 4519.89, 55691.01, 28295.34, 23648.29, 34595.13, 33946.39, 27909.47, 81777.35, 31453.39, 78628.72, 69545.62, 18174.08, 11951.41, 38726.25, 34195.21, 30131.69, 24797.29, 28765.32, 36898.33, 64595.92, 31404.92, 75972.56, 74919.52, 18542.49, 22978.82, 51715.88, 38750.04, 56987.73, 40344.53, 39261.96, 31115.37, 73410.02, 59687.74, 79411.97, 96999.04, 43971.37, 20301.13, 58872.35, 36521.54, 44261.11, 52981.73, 45264.42, 63120.89, 87866.65, 77776.92, 118447.82, 83829.32, null, null, null, null, null, null], "forecast_sales": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 83829.32, 69957.54, 70859.54, 71761.55, 72663.56, 73565.57, 74467.57]}, "category": [{"Category": "Furniture", "Sales": 741999.7953, "Profit": 18451.2728, "Profit Margin": 0.0249}, {"Category": "Office Supplies", "Sales": 719047.032, "Profit": 122490.8008, "Profit Margin": 0.1704}, {"Category": "Technology", "Sales": 836154.033, "Profit": 145454.9481, "Profit Margin": 0.174}], "region": [{"Region": "Central", "Sales": 501239.89, "Profit": 39706.36}, {"Region": "East", "Sales": 678781.24, "Profit": 91522.78}, {"Region": "South", "Sales": 391721.9, "Profit": 46749.43}, {"Region": "West", "Sales": 725457.82, "Profit": 108418.45}], "subcategory": [{"Category": "Furniture", "Sub-Category": "Bookcases", "Sales": 114879.9963, "Profit": -3472.556, "Profit Margin": -0.0302}, {"Category": "Furniture", "Sub-Category": "Chairs", "Sales": 328449.103, "Profit": 26590.1663, "Profit Margin": 0.081}, {"Category": "Furniture", "Sub-Category": "Furnishings", "Sales": 91705.164, "Profit": 13059.1436, "Profit Margin": 0.1424}, {"Category": "Furniture", "Sub-Category": "Tables", "Sales": 206965.532, "Profit": -17725.4811, "Profit Margin": -0.0856}, {"Category": "Office Supplies", "Sub-Category": "Appliances", "Sales": 107532.161, "Profit": 18138.0054, "Profit Margin": 0.1687}, {"Category": "Office Supplies", "Sub-Category": "Art", "Sales": 27118.792, "Profit": 6527.787, "Profit Margin": 0.2407}, {"Category": "Office Supplies", "Sub-Category": "Binders", "Sales": 203412.733, "Profit": 30221.7633, "Profit Margin": 0.1486}, {"Category": "Office Supplies", "Sub-Category": "Envelopes", "Sales": 16476.402, "Profit": 6964.1767, "Profit Margin": 0.4227}, {"Category": "Office Supplies", "Sub-Category": "Fasteners", "Sales": 3024.28, "Profit": 949.5182, "Profit Margin": 0.314}, {"Category": "Office Supplies", "Sub-Category": "Labels", "Sales": 12486.312, "Profit": 5546.254, "Profit Margin": 0.4442}, {"Category": "Office Supplies", "Sub-Category": "Paper", "Sales": 78479.206, "Profit": 34053.5693, "Profit Margin": 0.4339}, {"Category": "Office Supplies", "Sub-Category": "Storage", "Sales": 223843.608, "Profit": 21278.8264, "Profit Margin": 0.0951}, {"Category": "Office Supplies", "Sub-Category": "Supplies", "Sales": 46673.538, "Profit": -1189.0995, "Profit Margin": -0.0255}, {"Category": "Technology", "Sub-Category": "Accessories", "Sales": 167380.318, "Profit": 41936.6357, "Profit Margin": 0.2505}, {"Category": "Technology", "Sub-Category": "Copiers", "Sales": 149528.03, "Profit": 55617.8249, "Profit Margin": 0.372}, {"Category": "Technology", "Sub-Category": "Machines", "Sales": 189238.631, "Profit": 3384.7569, "Profit Margin": 0.0179}, {"Category": "Technology", "Sub-Category": "Phones", "Sales": 330007.054, "Profit": 44515.7306, "Profit Margin": 0.1349}], "segment": [{"Segment": "Consumer", "Sales": 1161401.34, "Profit": 134119.21, "Orders": 2586, "AOV": 449.11}, {"Segment": "Corporate", "Sales": 706146.37, "Profit": 91979.13, "Orders": 1514, "AOV": 466.41}, {"Segment": "Home Office", "Sales": 429653.15, "Profit": 60298.68, "Orders": 909, "AOV": 472.67}], "top_products": [{"Product Name": "Canon imageCLASS 2200 Advanced Copier", "Category": "Technology", "Sales": 61599.82, "Profit": 25199.93, "Quantity": 20}, {"Product Name": "Fellowes PB500 Electric Punch Plastic Comb Binding Machine with Manual Bind", "Category": "Office Supplies", "Sales": 27453.38, "Profit": 7753.04, "Quantity": 31}, {"Product Name": "Hewlett Packard LaserJet 3310 Copier", "Category": "Technology", "Sales": 18839.69, "Profit": 6983.88, "Quantity": 38}, {"Product Name": "Canon PC1060 Personal Laser Copier", "Category": "Technology", "Sales": 11619.83, "Profit": 4570.93, "Quantity": 19}, {"Product Name": "HP Designjet T520 Inkjet Large Format Printer - 24\" Color", "Category": "Technology", "Sales": 18374.9, "Profit": 4094.98, "Quantity": 12}, {"Product Name": "Ativa V4110MDD Micro-Cut Shredder", "Category": "Technology", "Sales": 7699.89, "Profit": 3772.95, "Quantity": 11}, {"Product Name": "3D Systems Cube Printer, 2nd Generation, Magenta", "Category": "Technology", "Sales": 14299.89, "Profit": 3717.97, "Quantity": 11}, {"Product Name": "Plantronics Savi W720 Multi-Device Wireless Headset System", "Category": "Technology", "Sales": 9367.29, "Profit": 3696.28, "Quantity": 24}, {"Product Name": "Ibico EPK-21 Electric Binding System", "Category": "Office Supplies", "Sales": 15875.92, "Profit": 3345.28, "Quantity": 13}, {"Product Name": "Zebra ZM400 Thermal Label Printer", "Category": "Technology", "Sales": 6965.7, "Profit": 3343.54, "Quantity": 6}, {"Product Name": "Honeywell Enviracaire Portable HEPA Air Cleaner for 17' x 22' Room", "Category": "Office Supplies", "Sales": 11304.44, "Profit": 3247.02, "Quantity": 40}, {"Product Name": "Hewlett Packard 610 Color Digital Copier / Printer", "Category": "Technology", "Sales": 8899.82, "Profit": 3124.94, "Quantity": 21}, {"Product Name": "Plantronics CS510 - Over-the-Head monaural Wireless Headset System", "Category": "Technology", "Sales": 10822.36, "Profit": 3085.03, "Quantity": 35}, {"Product Name": "Canon Imageclass D680 Copier / Fax", "Category": "Technology", "Sales": 8959.87, "Profit": 2799.96, "Quantity": 16}, {"Product Name": "Fellowes PB300 Plastic Comb Binding Machine", "Category": "Office Supplies", "Sales": 8070.19, "Profit": 2518.06, "Quantity": 27}], "bottom_products": [{"Product Name": "Cubify CubeX 3D Printer Double Head Print", "Category": "Technology", "Sales": 11099.96, "Profit": -8879.97, "Quantity": 9}, {"Product Name": "Lexmark MX611dhe Monochrome Laser Printer", "Category": "Technology", "Sales": 16829.9, "Profit": -4589.97, "Quantity": 18}, {"Product Name": "Cubify CubeX 3D Printer Triple Head Print", "Category": "Technology", "Sales": 7999.98, "Profit": -3839.99, "Quantity": 4}, {"Product Name": "Chromcraft Bull-Nose Wood Oval Conference Tables & Bases", "Category": "Furniture", "Sales": 9917.64, "Profit": -2876.12, "Quantity": 27}, {"Product Name": "Bush Advantage Collection Racetrack Conference Table", "Category": "Furniture", "Sales": 9544.72, "Profit": -1934.4, "Quantity": 33}, {"Product Name": "GBC DocuBind P400 Electric Binding System", "Category": "Office Supplies", "Sales": 17965.07, "Profit": -1878.17, "Quantity": 27}, {"Product Name": "Cisco TelePresence System EX90 Videoconferencing Unit", "Category": "Technology", "Sales": 22638.48, "Profit": -1811.08, "Quantity": 6}, {"Product Name": "Martin Yale Chadless Opener Electric Letter Opener", "Category": "Office Supplies", "Sales": 16656.2, "Profit": -1299.18, "Quantity": 22}, {"Product Name": "Balt Solid Wood Round Tables", "Category": "Furniture", "Sales": 6518.75, "Profit": -1201.06, "Quantity": 19}, {"Product Name": "BoxOffice By Design Rectangular and Half-Moon Meeting Room Tables", "Category": "Furniture", "Sales": 1706.25, "Profit": -1148.44, "Quantity": 15}, {"Product Name": "Riverside Furniture Oval Coffee Table, Oval End Table, End Table with Drawer", "Category": "Furniture", "Sales": 4446.18, "Profit": -1147.4, "Quantity": 25}, {"Product Name": "Epson TM-T88V Direct Thermal Printer - Monochrome - Desktop", "Category": "Technology", "Sales": 1212.7, "Profit": -1057.23, "Quantity": 10}, {"Product Name": "Hon 2090 \u201cPillow Soft\u201d Series Mid Back Swivel/Tilt Chairs", "Category": "Furniture", "Sales": 5282.42, "Profit": -989.05, "Quantity": 24}, {"Product Name": "O'Sullivan 4-Shelf Bookcase in Odessa Pine", "Category": "Furniture", "Sales": 2740.2, "Profit": -975.1, "Quantity": 37}, {"Product Name": "Bretford \u201cJust In Time\u201d Height-Adjustable Multi-Task Work Tables", "Category": "Furniture", "Sales": 5634.9, "Profit": -964.19, "Quantity": 17}], "rfm_distribution": {"Champions": 34, "Loyal Customers": 204, "At Risk / Lost": 179, "New / Occasional": 159, "Needs Attention": 217}, "rfm_avg_monetary": {"Champions": 5863.65, "Loyal Customers": 3443.47, "At Risk / Lost": 1015.32, "New / Occasional": 2247.42, "Needs Attention": 3946.02}};
+const NAVY = '#10233F', TEAL = '#0E9594', AMBER = '#E2703A', SLATE = '#55636F', LINE='#DADFE5';
+const FONT = {family: '-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif', color: '#1D2B3A', size: 12};
+const baseLayout = {
+  font: FONT, margin: {l:60, r:20, t:10, b:50}, plot_bgcolor:'white', paper_bgcolor:'white',
+  legend: {orientation:'h', y:1.12, font:{size:11}},
+  xaxis: {gridcolor:'#EEF1F4', zeroline:false},
+  yaxis: {gridcolor:'#EEF1F4', zeroline:false},
+};
+const cfg = {displayModeBar:false, responsive:true};
+const fmtUSD = (v) => '$' + Number(v).toLocaleString('en-US', {maximumFractionDigits:0});
+const fmtUSDk = (v) => '$' + (v/1000).toFixed(0) + 'K';
+
+// ---------- KPI cards ----------
+const kpiDefs = [
+  {label:'Total Sales', value: fmtUSD(D.kpi.total_sales), positive:false},
+  {label:'Total Profit', value: fmtUSD(D.kpi.total_profit), positive:false},
+  {label:'Profit Margin', value: (D.kpi.profit_margin*100).toFixed(1)+'%', positive:false},
+  {label:'Distinct Orders', value: D.kpi.distinct_orders.toLocaleString('en-US'), positive:false},
+  {label:'Avg Order Value', value: fmtUSD(D.kpi.avg_order_value), positive:false},
+  {label:'Growth YoY 2018', value: '+' + (D.kpi.yoy_growth*100).toFixed(1)+'%', positive:true},
+];
+document.getElementById('kpiStrip').innerHTML = kpiDefs.map(k =>
+  `<div class="kpi-card"><p class="kpi-label">${k.label}</p><p class="kpi-value ${k.positive?'positive':''}">${k.value}</p></div>`
+).join('');
+
+// ---------- 1. Monthly trend + forecast ----------
+Plotly.newPlot('trendChart', [
+  {x: D.monthly_trend.labels, y: D.monthly_trend.actual_sales, type:'scatter', mode:'lines',
+   name:'Sales Aktual', line:{color:NAVY, width:2.5}},
+  {x: D.monthly_trend.labels, y: D.monthly_trend.forecast_sales, type:'scatter', mode:'lines',
+   name:'Forecast (Trend Linear)', line:{color:AMBER, width:2.5, dash:'dash'}},
+], {...baseLayout, height:360, yaxis:{...baseLayout.yaxis, tickprefix:'$', tickformat:',.0f'}}, cfg);
+
+// ---------- 2. Category (Sales bar + Margin line) ----------
+const cats = D.category.map(c=>c.Category);
+Plotly.newPlot('categoryChart', [
+  {x: cats, y: D.category.map(c=>c.Sales), type:'bar', name:'Sales', marker:{color:TEAL},
+   yaxis:'y', text: D.category.map(c=>fmtUSDk(c.Sales)), textposition:'outside'},
+  {x: cats, y: D.category.map(c=>c['Profit Margin']*100), type:'scatter', mode:'lines+markers',
+   name:'Profit Margin %', yaxis:'y2', line:{color:AMBER, width:3}, marker:{size:8}},
+], {...baseLayout, height:340, title:{text:'Sales vs Profit Margin per Kategori', font:{size:13.5, color:NAVY}},
+    yaxis:{...baseLayout.yaxis, title:'Sales ($)'},
+    yaxis2:{overlaying:'y', side:'right', title:'Margin (%)', range:[0,20], showgrid:false}}, cfg);
+
+// ---------- 3. Region profit ----------
+const regSorted = [...D.region].sort((a,b)=>a.Profit-b.Profit);
+Plotly.newPlot('regionChart', [
+  {x: regSorted.map(r=>r.Profit), y: regSorted.map(r=>r.Region), type:'bar', orientation:'h',
+   marker:{color: regSorted.map(r=> r.Profit < 45000 ? AMBER : TEAL)},
+   text: regSorted.map(r=>fmtUSDk(r.Profit)), textposition:'outside'},
+], {...baseLayout, height:340, title:{text:'Profit per Region', font:{size:13.5, color:NAVY}},
+    xaxis:{...baseLayout.xaxis, title:'Profit ($)'}}, cfg);
+
+// ---------- 4. Top products ----------
+const top10 = D.top_products.slice(0,10).slice().reverse();
+Plotly.newPlot('productChart', [
+  {x: top10.map(p=>p.Profit), y: top10.map(p=> p['Product Name'].length>34? p['Product Name'].slice(0,31)+'...': p['Product Name']),
+   type:'bar', orientation:'h', marker:{color:NAVY}, text: top10.map(p=>fmtUSDk(p.Profit)), textposition:'outside'},
+], {...baseLayout, height:380, margin:{...baseLayout.margin, l:210},
+    title:{text:'Top 10 Produk (Profit)', font:{size:13.5, color:NAVY}}}, cfg);
+
+// ---------- 5. RFM donut ----------
+const rfmLabels = Object.keys(D.rfm_distribution);
+const rfmValues = Object.values(D.rfm_distribution);
+const rfmColors = {'Champions':TEAL,'Loyal Customers':'#2E75B6','At Risk / Lost':AMBER,'New / Occasional':'#F2A104','Needs Attention':'#9AA7B2'};
+Plotly.newPlot('rfmChart', [
+  {labels: rfmLabels, values: rfmValues, type:'pie', hole:0.5,
+   marker:{colors: rfmLabels.map(l=>rfmColors[l])}, textinfo:'percent', textfont:{size:11}},
+], {...baseLayout, height:380, title:{text:'Distribusi Segmen Pelanggan (RFM)', font:{size:13.5, color:NAVY}},
+    legend:{...baseLayout.legend, orientation:'v', x:1.02, y:0.5}}, cfg);
+
+// ---------- Findings (data-driven) ----------
+const furniture = D.category.find(c=>c.Category==='Furniture');
+const tech = D.category.find(c=>c.Category==='Technology');
+const central = D.region.find(r=>r.Region==='Central');
+const westEastProfit = D.region.filter(r=>['West','East'].includes(r.Region)).reduce((s,r)=>s+r.Profit,0);
+const totalProfit = D.kpi.total_profit;
+const atRisk = (D.rfm_distribution['At Risk / Lost']||0) + (D.rfm_distribution['Needs Attention']||0);
+const totalCust = Object.values(D.rfm_distribution).reduce((a,b)=>a+b,0);
+
+const findings = [
+  {cls:'', html:`<b>Furniture jebakan margin:</b> Sales Furniture (${fmtUSDk(furniture.Sales)}) hampir menyamai Technology (${fmtUSDk(tech.Sales)}), tapi margin-nya hanya ${(furniture['Profit Margin']*100).toFixed(1)}% vs Technology ${(tech['Profit Margin']*100).toFixed(1)}%.`},
+  {cls:'', html:`<b>Region Central tertinggal:</b> Profit Central hanya ${fmtUSDk(central.Profit)} meski sales-nya ${fmtUSDk(central.Sales)} — indikasi masalah diskon serupa dengan Furniture.`},
+  {cls:'good', html:`<b>West &amp; East jadi tulang punggung profit:</b> Kedua region ini menyumbang ${((westEastProfit/totalProfit)*100).toFixed(0)}% dari total profit perusahaan.`},
+  {cls:'', html:`<b>Setengah pelanggan butuh perhatian:</b> Dari ${totalCust} pelanggan, ${atRisk} (${((atRisk/totalCust)*100).toFixed(0)}%) masuk kategori "At Risk" atau "Needs Attention" — peluang retensi besar dibanding akuisisi baru.`},
+];
+document.getElementById('findings').innerHTML = findings.map(f =>
+  `<div class="finding ${f.cls}">${f.html}</div>`
+).join('');
+</script>
+</body>
+</html>
