@@ -27,19 +27,6 @@
   }
   .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
 
-  .terminal-strip {
-    background: var(--navy);
-    color: var(--teal);
-    font-size: 12.5px;
-    padding: 9px 28px;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-    overflow-x: auto;
-    border-bottom: 1px solid #0A1930;
-  }
-  .terminal-strip span.sep { color: #4B6A87; margin: 0 10px; }
-  .terminal-strip span.val { color: #E8F3F3; }
-
   header.hero {
     background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
     color: white;
@@ -75,7 +62,7 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 14px;
-    margin-top: -30px;
+    margin-top: 28px;
     margin-bottom: 40px;
   }
   .kpi-card {
@@ -155,17 +142,13 @@
 </head>
 <body>
 
-<div class="terminal-strip mono">
-  DATASET:<span class="val">&nbsp;superstore_orders_clean.csv</span><span class="sep">·</span>BARIS:<span class="val">&nbsp;9.994 baris pesanan</span><span class="sep">·</span>PERIODE:<span class="val">&nbsp;2015-01 &rarr; 2018-12</span><span class="sep">·</span>DIPROSES:<span class="val">&nbsp;python · pandas · numpy · plotly</span>
-</div>
-
 <header class="hero">
   <div class="hero-inner">
     <p class="eyebrow">Data Analyst Portfolio &mdash; Analisis Python</p>
     <h1>Superstore Sales Performance Dashboard</h1>
-    <p class="hero-sub">Analisis penjualan retail Amerika Serikat 2015&ndash;2018: performa kategori &amp; region,
-    forecast 6 bulan ke depan, dan segmentasi pelanggan RFM &mdash; seluruhnya dihitung dengan Python
-    (pandas/numpy) sebagai pengganti Power BI, divisualisasikan dengan Plotly.</p>
+    <p class="hero-sub">Menelusuri performa penjualan retail Amerika Serikat sepanjang 2015&ndash;2018 &mdash;
+    dari tren bulanan dan forecast 6 bulan ke depan, performa tiap kategori dan region, hingga
+    segmentasi pelanggan berdasarkan pola belanja mereka.</p>
   </div>
 </header>
 
@@ -205,7 +188,7 @@
 </main>
 
 <footer>
-  <div>Dibangun dengan <span class="mono">Python (pandas, numpy, Plotly)</span> &mdash; menggantikan Power BI untuk portofolio ini.</div>
+  <div>Dibangun dengan <span class="mono">Python (pandas, numpy, Plotly)</span></div>
   <div style="margin-top:4px;">Lihat juga: <span class="mono">notebook/analysis.ipynb</span> · <span class="mono">excel/Superstore_Sales_Analysis.xlsx</span></div>
 </footer>
 
