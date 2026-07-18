@@ -10,7 +10,7 @@ Proyek ini dikerjakan dalam **dua jalur analisis yang saling melengkapi**: Excel
   <img src="images/dashboard_preview.png" alt="Preview Dashboard Superstore Sales Performance" width="850">
 </p>
 
-<p align="center"><i>Dashboard interaktif lengkap:https://github.com/alnafs23/Superstore-Sales-Analysis/edit/main/README.md.</i></p>
+<p align="center"><i>Dashboard interaktif lengkap: <a href="https://alnafs23.github.io/Superstore-Sales-Analysis/dashboard/dashboard.html">buka versi live di sini</a>, atau jalankan <code>dashboard/dashboard.html</code> secara lokal.</i></p>
 
 ---
 
