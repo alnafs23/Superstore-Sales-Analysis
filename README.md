@@ -1,4 +1,4 @@
-# 📊 Superstore Sales Performance Analysis
+<img width="851" height="543" alt="image" src="https://github.com/user-attachments/assets/09e72395-8529-48cb-94fc-702c608114a7" /># 📊 Superstore Sales Performance Analysis
 
 **Analisis, Forecasting, dan Segmentasi Pelanggan menggunakan Excel & Python**
 
@@ -10,7 +10,7 @@ Proyek ini dikerjakan dalam **dua jalur analisis yang saling melengkapi**: Excel
   <img src="images/dashboard_preview.png" alt="Preview Dashboard Superstore Sales Performance" width="850">
 </p>
 
-<p align="center"><i>Dashboard interaktif lengkap: buka <code>dashboard/dashboard.html</code> di browser.</i></p>
+<p align="center"><i>Dashboard interaktif lengkap:https://github.com/alnafs23/Superstore-Sales-Analysis/edit/main/README.md.</i></p>
 
 ---
 
